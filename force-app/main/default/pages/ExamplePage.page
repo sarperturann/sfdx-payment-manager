@@ -1,0 +1,4 @@
+<apex:page standardController="Account"
+extensions="ExamplePageController">
+<apex:image url="{!fileURL}" />
+</apex:page>

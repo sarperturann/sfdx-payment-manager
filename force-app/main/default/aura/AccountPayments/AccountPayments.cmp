@@ -1,0 +1,88 @@
+<aura:component access="global" controller="AccountPaymentsController" implements="flexipage:availableForAllPageTypes">
+    <aura:attribute name="accounts" type="List" />
+    <aura:attribute name="selectedAccount" type="Id" />
+    <aura:attribute name="payments" type="List" />
+    <aura:attribute name="newPayment" type="Payment__c"
+                    default="{  'sobjectType':'Payment__c',
+                                'Payment_Type__c':'Service',
+                                'Amount__c': 0,
+                                'Due_Date__c': '',
+                                'Account__c': '',
+                                'Notes__c': '' }" />
+    <aura:attribute name="isFormVisible" type="Boolean" default="false"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <lightning:card title="Payment Information">
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size-_1-of-4">
+                <ul class="slds-list_vertical slds-has-dividers_top-space slds-has-block-links">
+                    <aura:iteration items="{!v.accounts}" var="account">
+                        <li class="slds-item">
+                            <button class="slds-button" onclick="{!c.selectAccount}" id="{!account.Id}">
+                                {!account.Name}
+                            </button>
+                        </li>
+                    </aura:iteration>
+                </ul>
+            </div>
+
+            <div class="slds-col slds-size_1-of-2" aura:id="paymentsController">
+                <aura:if isTrue="{!not(empty(v.payments))}">
+                    <ul class="slds-list_vertical slds-has-dividers_top-space">
+                        <aura:iteration items="{!v.payments}" var="payment">
+                            <li class="slds-list__item">
+                                <p><b>Payment Type: </b>{!payment.Payment_Type__c}</p>
+                                <p><b>Amount: </b>{!payment.Amount__c}</p>
+                                <p><b>Due Date: </b>{!payment.Due_Date__c}</p>
+                                <p><b>Notes: </b>{!payment.Notes__c}</p>
+                            </li>
+                        </aura:iteration>
+                    </ul>
+                    <aura:set attribute="else">
+                        <p>There are no existing payments for the selected account</p>
+                    </aura:set>
+                </aura:if>
+            </div>
+
+            <aura:if isTrue="{!v.isFormVisible}">
+                <div class="slds-col slds-size_1-of-4" aura:id="paymentFormContainer">
+                    <form class="slds-form_stacked">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="paymentType">Payment Type *</label>
+                            <div class="slds-form-element__control">
+                                <lightning:select aura:id="paymentType" value="{!v.newPayment.Payment_Type__c}">
+                                    <option value="Service">Service</option>
+                                    <option value="Product">Product</option>
+                                    <option value="Other">Other</option>
+                                </lightning:select>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="amount">Amount *</label>
+                            <div class="slds-form-element__control">
+                                <lightning:input type="currency" aura:id="amount" value="{!v.newPayment.Amount__c}"/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="dueDate">Due Date *</label>
+                            <div class="slds-form-element__control">
+                                <lightning:input type="date" aura:id="dueDate" value="{!v.newPayment.Due_Date__c}"/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="notes">Notes</label>
+                            <div class="slds-form-element__control">
+                                <lightning:textarea aura:id="notes" value="{!v.newPayment.Notes__c}"/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <lightning:button label="Create Payment" onclick="{!c.createPayment}" class="slds-m-top_small"/>
+                        </div>
+                    </form>
+                </div>
+            </aura:if>
+        </div>
+    </lightning:card>
+    
+</aura:component>
